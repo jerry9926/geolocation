@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>geolocation-demo</title>
+</head>
+<body onload="loadDemo()">
+	<h1 id="support"></h1>
+
+	<h2 id="latitude"></h2>
+	<h2 id="longitude"></h2>
+	<h2 id="accuracy"></h2>
+	<h2 id="timestamp"></h2>
+
+<script>
+	function loadDemo(){
+		if (navigator.geolocation) {
+			document.getElementById('support').innerHTML = 'Geolocation supported.';
+			// 重复更新
+			navigator.geolocation.watchPosition(updateLocation, handleLocationError);
+		} else {
+			document.getElementById('support').innerHTML = 'Geolocation is not supported.';
+		}
+	}
+
+	function updateLocation(position){
+		var latitude = position.coords.latitude,
+		longitude = position.coords.longitude,
+		accuracy = position.coords.accuracy,
+		timestamp = position.timestamp;
+
+		document.getElementById('latitude').innerHTML = 'latitude: ' + latitude;
+		document.getElementById('longitude').innerHTML = 'longitude: ' + longitude;
+		document.getElementById('accuracy').innerHTML = 'accuracy: ' + accuracy;
+		document.getElementById('timestamp').innerHTML = 'timestamp: ' + timestamp;
+	}
+
+	function handleLocationError(error){
+		switch(error.code){
+			case 0:
+				updateStatus("获取地理位置时出现未知错误");
+			break;
+			case 1:
+				updateStatus("用户拒绝浏览器获取地理位置信息");
+			break;
+			case 2:
+				updateStatus("无法获取地理位置信息");
+			break;
+			case 3:
+				updateStatus("请求超时");
+			break;
+		}
+	}
+
+	function updateStatus(message){
+		document.getElementById('support').innerHTML = message;
+	}
+
+	Number.prototype.toRadians = function() {
+		return this * Math.PI / 180;
+	}
+
+	function distance(latitude1, longitude1, latitude2, longitude2) {
+		//R是地球的半径，以KM为单位
+		var R = 6371;
+
+		var deltaLatitude = (latitude2 - latitude1).toRadians();
+		var deltaLongitude = (longitude2 - longitude1).toRadians();
+		latitude1 = latitude1.toRadians(), latitude2 = latitude2.toRadians();
+		var a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) + Math.cos(latitude1) * Math.cos(latitude2) * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		var d = R * c;
+		return d;
+	}
+
+
+</script>
+</body>
+</html>
